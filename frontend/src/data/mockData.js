@@ -1,0 +1,302 @@
+export const MOCK_THERMAL_EVENTS = [
+  {
+    id: "TH-001",
+    name: "Derabassi Industrial Zone Hotspot",
+    latitude: 30.5892,
+    longitude: 76.8421,
+    firms_metadata: {
+      brightness: 348.5,
+      frp_mw: 84.2,
+      confidence_pct: 94,
+      scan_date: "2026-09-03",
+      scan_time: "14:22 UTC",
+      satellite: "Aqua MODIS"
+    },
+    osm_context: {
+      nearest_infrastructure: "Derabassi Chemical & Synthetic Organics Plant",
+      infrastructure_type: "Chemical Factory",
+      distance_meters: 180,
+      secondary_infrastructure: "Liquefied Gas Buffer Yard (420m)"
+    },
+    persistence: {
+      detected_days_last_7: 6,
+      persistence_ratio: 0.857,
+      historical_pattern: "Continuous multi-day thermal emission"
+    }
+  },
+  {
+    id: "TH-002",
+    name: "Singrauli Industrial Corridor Anomaly",
+    latitude: 24.1994,
+    longitude: 82.6645,
+    firms_metadata: {
+      brightness: 372.1,
+      frp_mw: 142.8,
+      confidence_pct: 98,
+      scan_date: "2026-09-03",
+      scan_time: "13:45 UTC",
+      satellite: "Suomi NPP VIIRS"
+    },
+    osm_context: {
+      nearest_infrastructure: "NTPC Thermal Power Station Fuel Storage",
+      infrastructure_type: "Power Plant & Fuel Yard",
+      distance_meters: 95,
+      secondary_infrastructure: "Coal Rail Siding (310m)"
+    },
+    persistence: {
+      detected_days_last_7: 7,
+      persistence_ratio: 1.0,
+      historical_pattern: "Constant thermal intensity spike"
+    }
+  },
+  {
+    id: "TH-003",
+    name: "Ludhiana Stubble Burning Cluster",
+    latitude: 30.901,
+    longitude: 75.8573,
+    firms_metadata: {
+      brightness: 318.4,
+      frp_mw: 28.5,
+      confidence_pct: 72,
+      scan_date: "2026-09-03",
+      scan_time: "10:15 UTC",
+      satellite: "NOAA-20 VIIRS"
+    },
+    osm_context: {
+      nearest_infrastructure: "GT Road Rural Grain Godown",
+      infrastructure_type: "Agricultural Land / Warehouse",
+      distance_meters: 1450,
+      secondary_infrastructure: "Village Secondary Road (300m)"
+    },
+    persistence: {
+      detected_days_last_7: 1,
+      persistence_ratio: 0.143,
+      historical_pattern: "Transient single-day agricultural burn"
+    }
+  },
+  {
+    id: "TH-004",
+    name: "Karnal Crop Residue Parcel",
+    latitude: 29.6857,
+    longitude: 76.9905,
+    firms_metadata: {
+      brightness: 312.0,
+      frp_mw: 18.2,
+      confidence_pct: 65,
+      scan_date: "2026-09-03",
+      scan_time: "11:05 UTC",
+      satellite: "Aqua MODIS"
+    },
+    osm_context: {
+      nearest_infrastructure: "Karnal Agricultural Canal Siphon",
+      infrastructure_type: "Agricultural Farmland",
+      distance_meters: 2100,
+      secondary_infrastructure: "Farm Track (120m)"
+    },
+    persistence: {
+      detected_days_last_7: 1,
+      persistence_ratio: 0.143,
+      historical_pattern: "Isolated seasonal residue fire"
+    }
+  },
+  {
+    id: "TH-005",
+    name: "Similipal Tiger Reserve Shola Canopy Thermal Spike",
+    latitude: 21.9312,
+    longitude: 86.3218,
+    firms_metadata: {
+      brightness: 341.2,
+      frp_mw: 62.4,
+      confidence_pct: 89,
+      scan_date: "2026-09-03",
+      scan_time: "08:40 UTC",
+      satellite: "Terra MODIS"
+    },
+    osm_context: {
+      nearest_infrastructure: "Chahala Forest Beat Guard Post",
+      infrastructure_type: "Protected Forest Reserve",
+      distance_meters: 3800,
+      secondary_infrastructure: "Forest Patrol Track (900m)"
+    },
+    persistence: {
+      detected_days_last_7: 3,
+      persistence_ratio: 0.428,
+      historical_pattern: "Spreading dry deciduous canopy fire"
+    }
+  },
+  {
+    id: "TH-006",
+    name: "Western Ghats Ridge Shola Anomaly",
+    latitude: 13.5214,
+    longitude: 75.6124,
+    firms_metadata: {
+      brightness: 326.8,
+      frp_mw: 34.0,
+      confidence_pct: 78,
+      scan_date: "2026-09-03",
+      scan_time: "09:12 UTC",
+      satellite: "Suomi NPP VIIRS"
+    },
+    osm_context: {
+      nearest_infrastructure: "Bhadra Wildlife Sanctuary Boundary",
+      infrastructure_type: "Dense Forest & Slope",
+      distance_meters: 5200,
+      secondary_infrastructure: "Unpaved Ridge Road (1800m)"
+    },
+    persistence: {
+      detected_days_last_7: 2,
+      persistence_ratio: 0.285,
+      historical_pattern: "Moderate intensity forest undergrowth fire"
+    }
+  },
+  {
+    id: "TH-007",
+    name: "Jharia Coalfield Seam 11 Under-Surface Fire",
+    latitude: 23.7461,
+    longitude: 86.4158,
+    firms_metadata: {
+      brightness: 388.9,
+      frp_mw: 195.4,
+      confidence_pct: 99,
+      scan_date: "2026-09-03",
+      scan_time: "14:50 UTC",
+      satellite: "Suomi NPP VIIRS"
+    },
+    osm_context: {
+      nearest_infrastructure: "BCCL Open Cast Pit No. 4 Siding",
+      infrastructure_type: "Active Open-Cast Mining Site",
+      distance_meters: 110,
+      secondary_infrastructure: "Coal Washery Conveyor (240m)"
+    },
+    persistence: {
+      detected_days_last_7: 7,
+      persistence_ratio: 1.0,
+      historical_pattern: "Chronic subterranean coal seam combustion"
+    }
+  },
+  {
+    id: "TH-008",
+    name: "Korba Open Excavation Pit Heat Cluster",
+    latitude: 22.3584,
+    longitude: 82.6912,
+    firms_metadata: {
+      brightness: 352.0,
+      frp_mw: 92.1,
+      confidence_pct: 91,
+      scan_date: "2026-09-03",
+      scan_time: "12:10 UTC",
+      satellite: "NOAA-20 VIIRS"
+    },
+    osm_context: {
+      nearest_infrastructure: "Gevra Bauxite Pit Heavy Equipment Depot",
+      infrastructure_type: "Mining Excavation Quarry",
+      distance_meters: 320,
+      secondary_infrastructure: "Haul Road Intersection (150m)"
+    },
+    persistence: {
+      detected_days_last_7: 5,
+      persistence_ratio: 0.714,
+      historical_pattern: "Persistent industrial mining thermal signature"
+    }
+  },
+  {
+    id: "TH-009",
+    name: "Grand Trunk Brick Kiln Cluster #14",
+    latitude: 27.1767,
+    longitude: 78.0081,
+    firms_metadata: {
+      brightness: 321.4,
+      frp_mw: 26.8,
+      confidence_pct: 82,
+      scan_date: "2026-09-03",
+      scan_time: "15:00 UTC",
+      satellite: "Aqua MODIS"
+    },
+    osm_context: {
+      nearest_infrastructure: "Agra Rural Bull's Trench Kiln Compound",
+      infrastructure_type: "Traditional Brick Manufacture Kiln",
+      distance_meters: 80,
+      secondary_infrastructure: "Clay Pit (200m)"
+    },
+    persistence: {
+      detected_days_last_7: 4,
+      persistence_ratio: 0.571,
+      historical_pattern: "Cyclic batch kiln baking signature"
+    }
+  },
+  {
+    id: "TH-010",
+    name: "Hazira Coastal Gas Terminal Flare Stack",
+    latitude: 21.1042,
+    longitude: 72.6514,
+    firms_metadata: {
+      brightness: 395.2,
+      frp_mw: 210.6,
+      confidence_pct: 99,
+      scan_date: "2026-09-03",
+      scan_time: "16:10 UTC",
+      satellite: "Suomi NPP VIIRS"
+    },
+    osm_context: {
+      nearest_infrastructure: "Hazira LNG Terminal Flare Stack #2",
+      infrastructure_type: "Petrochemical Refinery / Gas Flare",
+      distance_meters: 45,
+      secondary_infrastructure: "Cryogenic Tank Farm (350m)"
+    },
+    persistence: {
+      detected_days_last_7: 7,
+      persistence_ratio: 1.0,
+      historical_pattern: "Continuous operational gas flaring"
+    }
+  },
+  {
+    id: "TH-011",
+    name: "Vadodara Petrochemical Cracker Unit Thermal Anomaly",
+    latitude: 22.3072,
+    longitude: 73.1812,
+    firms_metadata: {
+      brightness: 361.5,
+      frp_mw: 115.0,
+      confidence_pct: 95,
+      scan_date: "2026-09-03",
+      scan_time: "13:30 UTC",
+      satellite: "NOAA-20 VIIRS"
+    },
+    osm_context: {
+      nearest_infrastructure: "Koyali Refinery Naphtha Cracker",
+      infrastructure_type: "Industrial Chemical Refinery",
+      distance_meters: 130,
+      secondary_infrastructure: "Pipeline Dispatch Manifold (280m)"
+    },
+    persistence: {
+      detected_days_last_7: 6,
+      persistence_ratio: 0.857,
+      historical_pattern: "High heat industrial processing emission"
+    }
+  },
+  {
+    id: "TH-012",
+    name: "Kolhapur Sugarcane Trash Burn",
+    latitude: 16.705,
+    longitude: 74.2433,
+    firms_metadata: {
+      brightness: 314.5,
+      frp_mw: 21.3,
+      confidence_pct: 68,
+      scan_date: "2026-09-03",
+      scan_time: "11:45 UTC",
+      satellite: "Terra MODIS"
+    },
+    osm_context: {
+      nearest_infrastructure: "Panchganga Cooperative Sugar Mill Field",
+      infrastructure_type: "Agricultural Plantation",
+      distance_meters: 1650,
+      secondary_infrastructure: "Irrigation Distributary (400m)"
+    },
+    persistence: {
+      detected_days_last_7: 1,
+      persistence_ratio: 0.143,
+      historical_pattern: "Short duration post-harvest trash burn"
+    }
+  }
+];
