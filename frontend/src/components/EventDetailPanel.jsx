@@ -42,12 +42,6 @@ export default function EventDetailPanel({ event, onOpenDossier, onOpenReport })
               Generate Report
             </button>
 
-            <button
-              onClick={onOpenDossier}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg transition-colors shadow-lg shadow-amber-500/20"
-            >
-              View Dossier
-            </button>
           </div>
         </div>
       </div>

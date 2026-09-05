@@ -1,106 +1,78 @@
 import React from 'react';
-import { Flame, ShieldAlert, Cpu, Filter, MapPin, Search } from 'lucide-react';
-import { MOCK_THERMAL_EVENTS } from '../data/mockData';
+import { Activity, BarChart3, ChevronRight, CircleDot, LayoutDashboard, Server, ShieldAlert } from 'lucide-react';
 
-export default function Sidebar({ 
-  events = [], 
-  selectedEvent, 
-  setSelectedEvent, 
-  filterCategory, 
-  setFilterCategory 
-}) {
-  const categories = [
-    'ALL',
-    'Industrial Fire',
-    'Mining Activity',
-    'Forest Fire',
-    'Agricultural Burning',
-  ];
+const navigation = [
+  { id: 'overview', label: 'Tactical overview', icon: LayoutDashboard },
+  { id: 'telemetry', label: 'Telemetry feeds', icon: Activity },
+  { id: 'matrix', label: 'Threat matrix', icon: BarChart3 },
+  { id: 'nodes', label: 'System nodes', icon: Server },
+];
 
-  const filteredEvents = events.filter(e => {
-    if (filterCategory === 'ALL') return true;
-    return e.classification?.predicted_category === filterCategory;
-  });
-
-  const getRiskColor = (score) => {
-    if (score >= 70) return 'text-red-400 bg-red-950/60 border-red-800/80';
-    if (score >= 45) return 'text-amber-400 bg-amber-950/60 border-amber-800/80';
-    return 'text-emerald-400 bg-emerald-950/60 border-emerald-800/80';
-  };
-
+export function MobileNav({ activeTab, setActiveTab, totalEvents }) {
   return (
-    <aside className="w-80 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 h-full">
-      {/* Search & Filter Header */}
-      <div className="p-3 border-b border-slate-800 space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-            NASA FIRMS Feed
-          </span>
-          <span className="text-[10px] font-mono bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full">
-            {filteredEvents.length} Active
-          </span>
-        </div>
+    <nav className="flex shrink-0 gap-1 overflow-x-auto border-b border-outline-variant bg-surface-container-lowest px-3 py-2 lg:hidden" aria-label="Mobile navigation">
+      {navigation.map(({ id, label, icon: Icon }) => (
+        <button
+          key={id}
+          type="button"
+          onClick={() => setActiveTab(id)}
+          className={`flex shrink-0 items-center gap-2 border px-3 py-2 text-[11px] font-semibold ${
+            activeTab === id ? 'border-tertiary/50 bg-tertiary-container text-tertiary' : 'border-outline-variant text-on-surface-variant'
+          }`}
+        >
+          <Icon className="h-3.5 w-3.5" />
+          {label}
+          {id === 'telemetry' && <span className="font-code text-[10px]">{totalEvents}</span>}
+        </button>
+      ))}
+    </nav>
+  );
+}
 
-        {/* Category Pills */}
-        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setFilterCategory(cat)}
-              className={`text-[10px] font-semibold px-2 py-1 rounded-md shrink-0 transition-colors ${
-                filterCategory === cat
-                  ? 'bg-amber-500 text-slate-950'
-                  : 'bg-slate-800 text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {cat === 'ALL' ? 'All Events' : cat.split(' ')[0]}
-            </button>
-          ))}
+export default function Sidebar({ activeTab, setActiveTab, totalEvents }) {
+  return (
+    <aside className="hidden w-64 shrink-0 border-r border-outline-variant bg-surface-container-lowest px-3 py-4 lg:flex lg:flex-col">
+      <div className="flex items-center gap-3 px-3 pb-7">
+        <div className="flex h-9 w-9 items-center justify-center border border-tertiary/50 bg-tertiary-container text-tertiary">
+          <ShieldAlert className="h-5 w-5" />
+        </div>
+        <div className="min-w-0">
+          <p className="font-label text-[10px] tracking-[0.14em] text-tertiary">TACTICAL OS</p>
+          <p className="truncate text-sm font-semibold text-on-surface">Thermal Intel</p>
         </div>
       </div>
 
-      {/* Telemetry Event List */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-2">
-        {filteredEvents.map(event => {
-          const isSelected = selectedEvent?.id === event.id;
-          const score = event.risk_evaluation?.score || 0;
-
+      <div className="mb-3 px-3 font-label text-[10px] uppercase tracking-[0.16em] text-on-surface-variant">Workspace</div>
+      <nav className="space-y-1" aria-label="Primary navigation">
+        {navigation.map(({ id, label, icon: Icon }) => {
+          const active = activeTab === id;
           return (
-            <div
-              key={event.id}
-              onClick={() => setSelectedEvent(event)}
-              className={`p-3 rounded-xl border transition-all cursor-pointer ${
-                isSelected
-                  ? 'bg-slate-850 border-amber-500/80 shadow-lg shadow-amber-500/10 ring-1 ring-amber-500/50'
-                  : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
+            <button
+              key={id}
+              type="button"
+              onClick={() => setActiveTab(id)}
+              className={`group flex w-full items-center gap-3 border-l-2 px-3 py-3 text-left text-sm transition-colors ${
+                active
+                  ? 'border-tertiary bg-surface-container-high text-tertiary'
+                  : 'border-transparent text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
               }`}
+              aria-current={active ? 'page' : undefined}
             >
-              <div className="flex items-start justify-between">
-                <span className="text-[10px] font-mono text-amber-400 font-bold bg-amber-950/60 border border-amber-800/40 px-1.5 py-0.5 rounded">
-                  {event.id}
-                </span>
-
-                <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${getRiskColor(score)}`}>
-                  Risk {score}
-                </span>
-              </div>
-
-              <h4 className="text-xs font-bold text-slate-200 mt-1.5 leading-snug line-clamp-1">
-                {event.name}
-              </h4>
-
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono mt-1">
-                <MapPin className="w-3 h-3 text-rose-400 shrink-0" />
-                <span className="truncate">{event.osm_context?.nearest_infrastructure}</span>
-              </div>
-
-              <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono mt-2 pt-2 border-t border-slate-800/80">
-                <span>FRP: <strong className="text-amber-400">{event.firms_metadata?.frp_mw} MW</strong></span>
-                <span>{event.persistence?.detected_days_last_7}/7 Days Active</span>
-              </div>
-            </div>
+              <Icon className="h-4 w-4 shrink-0" />
+              <span className="flex-1">{label}</span>
+              {id === 'telemetry' && <span className="font-code text-[10px] text-on-surface-variant">{totalEvents}</span>}
+              {active && <ChevronRight className="h-3.5 w-3.5" />}
+            </button>
           );
         })}
+      </nav>
+
+      <div className="mt-auto border-t border-outline-variant px-3 pt-4">
+        <div className="flex items-center gap-2 text-[11px] text-on-surface-variant">
+          <CircleDot className="h-3.5 w-3.5 text-tertiary" />
+          <span>Signal network online</span>
+        </div>
+        <p className="mt-2 font-code text-[10px] text-on-surface-variant/70">PS 26162 / BUILD 1.0.0</p>
       </div>
     </aside>
   );

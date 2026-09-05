@@ -8,21 +8,21 @@ export default function HeaderBar({ events, isLiveApiConnected }) {
   return (
     <header className="h-14 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between shrink-0 shadow-md">
       {/* Brand & System Title */}
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
           <Flame className="w-5 h-5 text-slate-950 fill-slate-950" />
         </div>
         
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h1 className="text-sm font-black text-slate-100 tracking-wide font-sans">
+            <h1 className="max-w-[170px] truncate text-sm font-black tracking-wide text-slate-100 font-sans sm:max-w-none">
               INDUSTRIAL THERMAL INTELLIGENCE SYSTEM
             </h1>
             <span className="text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded">
               SIH PS 26162
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 font-mono">
+          <p className="hidden text-[11px] text-slate-400 font-mono sm:block">
             NASA FIRMS Satellite Telemetry & OpenStreetMap Spatial Risk Engine
           </p>
         </div>

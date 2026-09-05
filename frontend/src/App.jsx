@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import HeaderBar from './components/HeaderBar';
-import Navbar from './components/Navbar';
+import Sidebar, { MobileNav } from './components/Sidebar';
 import OverviewTab from './components/OverviewTab';
 import TelemetryFeedsTab from './components/TelemetryFeedsTab';
 import ThreatMatrixTab from './components/ThreatMatrixTab';
@@ -58,22 +58,12 @@ export default function App() {
   }, []);
 
   return (
-    <div className="h-screen w-screen bg-slate-950 text-slate-100 flex flex-col overflow-hidden">
-      {/* Top System Header */}
-      <HeaderBar 
-        events={events}
-        isLiveApiConnected={isLiveApiConnected}
-      />
-
-      {/* Main Navigation Bar */}
-      <Navbar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        totalEvents={events.length}
-      />
-
-      {/* Tab Content Container */}
-      <main className="flex-1 overflow-hidden relative">
+    <div className="flex h-screen w-screen overflow-hidden bg-background text-on-surface">
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} totalEvents={events.length} />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <HeaderBar events={events} isLiveApiConnected={isLiveApiConnected} />
+        <MobileNav activeTab={activeTab} setActiveTab={setActiveTab} totalEvents={events.length} />
+        <main className="relative flex-1 overflow-hidden">
         {loading ? (
           <div className="h-full w-full flex items-center justify-center bg-slate-950">
             <div className="flex flex-col items-center gap-3">
@@ -118,7 +108,8 @@ export default function App() {
             )}
           </>
         )}
-      </main>
+        </main>
+      </div>
 
       {/* Printable Dossier Modal */}
       {isDossierOpen && selectedEvent && (
