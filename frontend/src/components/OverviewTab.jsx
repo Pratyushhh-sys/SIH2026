@@ -1,84 +1,61 @@
-import React from 'react';
+import React, { useState } from 'react';
 import GISMap from './GISMap';
 import EventDetailPanel from './EventDetailPanel';
+import KpiCards from './KpiCards';
+import SatellitePanel from './SatellitePanel';
+import TemporalAnalysis from './TemporalAnalysis';
 import GeospatialContext from './GeospatialContext';
 import ExplanationSection from './ExplanationSection';
-import KpiCards from './KpiCards';
 import InvestigationAlert from './InvestigationAlert';
+import { ChevronDown, FileText } from 'lucide-react';
 
-export default function OverviewTab({ 
-  events, 
-  selectedEvent, 
-  setSelectedEvent, 
-  onOpenDossier,
-  onOpenReport
-}) {
-  const criticalEvent = events.find(e => e.risk_evaluation?.score >= 90) || events[0];
+export default function OverviewTab({ events, selectedEvent, setSelectedEvent, onOpenDossier, onOpenReport, searchQuery }) {
+  const [visibleLayers, setVisibleLayers] = useState({ thermal: true, industrial: true, pipelines: true, mines: true, forest: true, agriculture: true, population: false });
+  const [baseMap, setBaseMap] = useState('map');
+  const [riskFilters, setRiskFilters] = useState({ HIGH: true, MEDIUM: true, LOW: true });
+
+  const toggleLayer = (key) => setVisibleLayers((current) => ({ ...current, [key]: !current[key] }));
+  const filteredEvents = events.filter((event) => {
+    const category = event.classification?.predicted_category;
+    const categoryVisible = (category === 'Industrial Fire' ? visibleLayers.industrial : true)
+      && (category === 'Mining Activity' ? visibleLayers.mines : true)
+      && (category === 'Forest Fire' ? visibleLayers.forest : true)
+      && (category === 'Agricultural Burning' ? visibleLayers.agriculture : true);
+    return visibleLayers.thermal && categoryVisible && riskFilters[event.riskLevel] !== false
+      && (!searchQuery || [event.id, event.location, event.state, event.classification?.predicted_category, event.riskLevel, `${event.riskLevel} Risk`].join(' ').toLowerCase().includes(searchQuery.toLowerCase()));
+  });
 
   return (
-    <div className="h-full w-full space-y-4 overflow-y-auto p-4">
+    <div className="stitch-dashboard">
       <KpiCards events={events} />
 
-      <InvestigationAlert event={criticalEvent} onSelectEvent={setSelectedEvent} />
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-        <div className="flex flex-col gap-4 lg:col-span-4">
-          <section className="flex h-[390px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl xl:h-[460px]">
-            <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950/90 px-4 py-2.5">
-              <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-200">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-amber-500" />
-                Live CartoDB Dark GIS Map
-              </h3>
-              <span className="font-mono text-[10px] text-slate-400">{events.length} Telemetry Points</span>
+      <div className="stitch-workspace">
+        <section className="stitch-map-card">
+          <div className="stitch-map-title"><span><span className="stitch-map-dot" /> THERMAL INTELLIGENCE</span><small>{events.length} active telemetry points</small></div>
+          <div className="stitch-map-canvas"><GISMap events={filteredEvents} selectedEvent={selectedEvent} onSelectEvent={setSelectedEvent} onOpenReport={onOpenReport} showThermalEvents={visibleLayers.thermal} baseMap={baseMap} />
+            <div className="stitch-layer-menu">
+              <div className="stitch-layer-heading"><span>◈ &nbsp;Map Layers</span><ChevronDown size={13} /></div>
+              {[['Thermal Events', 'thermal'], ['Industrial Facilities', 'industrial'], ['Pipelines', 'pipelines'], ['Mines', 'mines'], ['Forest Areas', 'forest'], ['Agriculture', 'agriculture'], ['Population Zones', 'population']].map(([layer, key], index) => <label key={layer}><input type="checkbox" checked={visibleLayers[key]} onChange={() => toggleLayer(key)} /><span className={`stitch-layer-dot layer-${index}`} />{layer}</label>)}
+              <div className="stitch-filter-heading">Risk Filters</div>
+              {Object.keys(riskFilters).map((level) => <label key={level}><input type="checkbox" checked={riskFilters[level]} onChange={() => setRiskFilters((current) => ({ ...current, [level]: !current[level] }))} /><span className={`stitch-layer-dot risk-${level.toLowerCase()}`} />{level} Risk</label>)}
+              <div className="stitch-base-heading">▣ &nbsp; Base Map</div>
+              {[['Map View', 'map'], ['Satellite View', 'satellite'], ['Terrain View', 'terrain']].map(([view, value]) => <label key={view}><input type="radio" name="basemap" checked={baseMap === value} onChange={() => setBaseMap(value)} />{view}</label>)}
             </div>
-            <div className="relative min-h-0 flex-1">
-              <GISMap events={events} selectedEvent={selectedEvent} onSelectEvent={setSelectedEvent} />
-            </div>
-          </section>
-
-          <section className="shrink-0 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950/90 px-4 py-2.5">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">Active Event Queue</h3>
-              <span className="font-mono text-[10px] text-slate-400">Select to inspect</span>
-            </div>
-            <div className="grid gap-2 p-3 sm:grid-cols-2">
-              {events.slice(0, 6).map((event) => {
-                const isSelected = selectedEvent?.id === event.id;
-                const score = event.risk_evaluation?.score ?? 0;
-                return (
-                  <button
-                    key={event.id}
-                    type="button"
-                    onClick={() => setSelectedEvent(event)}
-                    className={`border-l-2 p-3 text-left transition-colors ${isSelected ? 'border-amber-400 bg-slate-800' : 'border-slate-700 bg-slate-950/60 hover:border-amber-400/70 hover:bg-slate-800/70'}`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-[10px] font-bold text-amber-400">{event.id}</span>
-                      <span className="font-mono text-[10px] text-slate-400">Risk {score}</span>
-                    </div>
-                    <p className="mt-1 truncate text-xs font-semibold text-slate-200">{event.name}</p>
-                    <p className="mt-1 truncate font-mono text-[10px] text-slate-500">{event.persistence?.detected_days_last_7}/7 days active</p>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-        </div>
-
-        <div className="flex flex-col gap-4 lg:col-span-3">
-          <section className="min-h-[520px] overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl">
-            <div className="border-b border-slate-800 bg-slate-950/90 px-4 py-2.5">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">Hotspot Investigation Inspector</h3>
-            </div>
-            <div className="h-[calc(100%-41px)] overflow-y-auto">
-              <EventDetailPanel event={selectedEvent} onOpenDossier={onOpenDossier} onOpenReport={onOpenReport} />
-            </div>
-          </section>
-
-          {selectedEvent && <GeospatialContext event={selectedEvent} />}
-          {selectedEvent && <ExplanationSection event={selectedEvent} />}
-        </div>
+          </div>
+        </section>
+        <EventDetailPanel event={selectedEvent} events={events} onSelectEvent={setSelectedEvent} onOpenDossier={onOpenDossier} onOpenReport={onOpenReport} />
       </div>
+
+      <div className="stitch-analysis-grid">
+        <section className="stitch-analysis-card stitch-satellite-card"><div className="stitch-card-heading"><span>▣ &nbsp;Satellite Evidence</span><small>Sentinel-2 &nbsp; Landsat &nbsp; INSAT</small></div><SatellitePanel event={selectedEvent} /></section>
+        <section className="stitch-analysis-card"><TemporalAnalysis event={selectedEvent} events={events} /></section>
+        <section className="stitch-analysis-card"><div className="stitch-card-heading"><span>◈ &nbsp;Geospatial Context</span><small>HIGH</small></div><GeospatialContext event={selectedEvent} /></section>
+        <section className="stitch-analysis-card"><div className="stitch-card-heading"><span>✓ &nbsp;Why This Risk Level?</span></div><ExplanationSection event={selectedEvent} /></section>
+        <section className="stitch-analysis-card stitch-alerts-card"><div className="stitch-card-heading"><span>⚠ &nbsp;Priority Alerts</span><small>View All</small></div>{[...events].sort((a, b) => (b.riskScore || 0) - (a.riskScore || 0)).slice(0, 5).map((event) => <button key={event.id} className="stitch-alert-row" onClick={() => setSelectedEvent(event)}><b>{event.id}</b><span>{event.classification?.predicted_category || 'Thermal Source'}<small>Risk: {Math.round(event.riskScore || event.risk_evaluation?.score || 0)} · {event.location}</small></span></button>)}<button className="stitch-report-button" onClick={onOpenReport}><FileText size={14} /> Generate Investigation Report</button></section>
+      </div>
+
+      <InvestigationAlert event={selectedEvent} onSelectEvent={setSelectedEvent} />
+      <footer className="stitch-footer"><strong>Smart India Hackathon 2026</strong><span>AI-Based Industrial Fire &amp; Thermal Source Attribution</span><small>PS 26162 | Geospatial Intelligence Engine v3.4</small></footer>
     </div>
   );
 }

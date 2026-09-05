@@ -2,12 +2,12 @@ export const MOCK_THERMAL_EVENTS = [
   {
     id: "TH-001",
     name: "Derabassi Industrial Zone Hotspot",
-    latitude: 30.5892,
-    longitude: 76.8421,
+    latitude: 30.721,
+    longitude: 76.851,
     firms_metadata: {
       brightness: 348.5,
-      frp_mw: 84.2,
-      confidence_pct: 94,
+      frp_mw: 86,
+      confidence_pct: 91,
       scan_date: "2026-09-03",
       scan_time: "14:22 UTC",
       satellite: "Aqua MODIS"
@@ -19,8 +19,8 @@ export const MOCK_THERMAL_EVENTS = [
       secondary_infrastructure: "Liquefied Gas Buffer Yard (420m)"
     },
     persistence: {
-      detected_days_last_7: 6,
-      persistence_ratio: 0.857,
+      detected_days_last_7: 5,
+      persistence_ratio: 0.714,
       historical_pattern: "Continuous multi-day thermal emission"
     }
   },

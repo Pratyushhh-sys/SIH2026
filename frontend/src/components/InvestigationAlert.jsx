@@ -5,7 +5,7 @@ export default function InvestigationAlert({ event, onSelectEvent }) {
   if (!event) return null;
 
   return (
-    <div className="bg-gradient-to-r from-red-950/90 via-slate-900 to-slate-900 border border-red-800/80 rounded-xl p-3.5 shadow-xl flex items-center justify-between">
+    <div className="stitch-investigation-alert flex items-center justify-between">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-lg bg-red-600/20 border border-red-500/40 flex items-center justify-center shrink-0">
           <AlertOctagon className="w-6 h-6 text-red-500 animate-pulse" />

@@ -134,3 +134,46 @@ export function calculateRisk(eventData, classification) {
     explainable_reasoning: reasoning_bullets
   };
 }
+
+export function enrichEvent(eventData) {
+  const classification = eventData.classification || classifyEvent(eventData);
+  const risk_evaluation = eventData.risk_evaluation || calculateRisk(eventData, classification);
+  const score = Math.round(risk_evaluation.score || 0);
+  const category = classification.predicted_category;
+  const persistenceDays = eventData.persistence?.detected_days_last_7 || 0;
+  const intensity = eventData.firms_metadata?.frp_mw || 0;
+  const confidence = eventData.firms_metadata?.confidence_pct || Math.round((classification.confidence || 0) * 100);
+  const regions = {
+    'TH-001': 'Punjab', 'TH-002': 'Madhya Pradesh', 'TH-003': 'Punjab', 'TH-004': 'Haryana',
+    'TH-005': 'Odisha', 'TH-006': 'Karnataka', 'TH-007': 'Jharkhand', 'TH-008': 'Chhattisgarh',
+    'TH-009': 'Uttar Pradesh', 'TH-010': 'Gujarat', 'TH-011': 'Gujarat', 'TH-012': 'Maharashtra'
+  };
+  const history = eventData.thermal_history || Array.from({ length: 7 }, (_, index) => {
+    const variation = ((eventData.latitude * 10 + index * 13) % 17) - 8;
+    return Math.max(8, Math.round(intensity * (0.72 + index * 0.045) + variation));
+  });
+  const probabilities = eventData.classification_probabilities || {
+    'Industrial Fire': category === 'Industrial Fire' ? confidence : Math.max(1, Math.round(confidence * 0.08)),
+    'Mining Activity': category === 'Mining Activity' ? confidence : Math.max(1, Math.round(confidence * 0.06)),
+    'Agricultural Burning': category === 'Agricultural Burning' ? confidence : Math.max(1, Math.round(confidence * 0.04)),
+    'Forest Fire': category === 'Forest Fire' ? confidence : Math.max(1, Math.round(confidence * 0.03))
+  };
+
+  return {
+    ...eventData,
+    location: eventData.location || eventData.name,
+    state: eventData.state || regions[eventData.id] || 'India',
+    detectionTime: eventData.detectionTime || `${eventData.firms_metadata?.scan_date || '2026-09-03'} ${eventData.firms_metadata?.scan_time || ''}`.trim(),
+    thermalIntensity: eventData.thermalIntensity || intensity,
+    confidence,
+    riskScore: eventData.riskScore ?? score,
+    riskLevel: eventData.riskLevel || (score >= 70 ? 'HIGH' : score >= 45 ? 'MEDIUM' : 'LOW'),
+    source: eventData.source || eventData.firms_metadata?.satellite || 'Satellite',
+    nearbyFacility: eventData.nearbyFacility || eventData.osm_context?.nearest_infrastructure,
+    explanation: eventData.explanation || risk_evaluation.explainable_reasoning,
+    thermal_history: history,
+    classification_probabilities: probabilities,
+    classification,
+    risk_evaluation
+  };
+}

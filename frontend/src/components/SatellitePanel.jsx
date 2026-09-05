@@ -28,7 +28,7 @@ export default function SatellitePanel({ event }) {
 
         <div className="relative z-10 text-center space-y-1">
           <Sparkles className="w-6 h-6 text-amber-400 mx-auto animate-pulse" />
-          <p className="text-xs font-mono text-slate-300 font-bold">Sentinel-2B SWIR Heat Band (B12)</p>
+          <p className="text-xs font-mono text-slate-300 font-bold">{event.source || 'Sentinel-2B'} SWIR Heat Band (B12)</p>
           <p className="text-[10px] font-mono text-slate-500">Reflectance Coefficient: 0.842 | Cloud Cover: 4.2%</p>
         </div>
 
@@ -43,11 +43,11 @@ export default function SatellitePanel({ event }) {
       <div className="grid grid-cols-2 gap-2 text-xs font-mono">
         <div className="bg-slate-950/60 p-2 rounded border border-slate-800">
           <span className="text-slate-500 text-[10px] block">Landsat-9 OLI Thermal</span>
-          <span className="text-slate-300 font-bold">348.2 K (Band 10)</span>
+          <span className="text-slate-300 font-bold">{event.firms_metadata?.brightness || event.thermalIntensity} K (Band 10)</span>
         </div>
         <div className="bg-slate-950/60 p-2 rounded border border-slate-800">
           <span className="text-slate-500 text-[10px] block">Last Satellite Pass</span>
-          <span className="text-sky-300 font-bold">Today 10:42 UTC</span>
+          <span className="text-sky-300 font-bold">{event.detectionTime || 'Today 10:42 UTC'}</span>
         </div>
       </div>
     </div>

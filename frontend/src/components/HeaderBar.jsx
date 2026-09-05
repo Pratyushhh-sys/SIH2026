@@ -1,65 +1,45 @@
-import React from 'react';
-import { Flame, ShieldAlert, Cpu, Radio, Wifi, WifiOff } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Bell, Flame, MapPin, Search } from 'lucide-react';
 
-export default function HeaderBar({ events, isLiveApiConnected }) {
-  const highRiskCount = events.filter(e => e.risk_evaluation?.score >= 70).length;
-  const industrialCount = events.filter(e => e.classification?.predicted_category === 'Industrial Fire').length;
+export default function HeaderBar({ events, isLiveApiConnected, searchQuery, setSearchQuery, onSelectEvent }) {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const inputRef = useRef(null);
+  const matches = searchQuery.trim().length < 2 ? [] : events.filter((event) => {
+    const haystack = [event.id, event.name, event.location, event.state, event.classification?.predicted_category, event.riskLevel, `${event.riskLevel} Risk`].join(' ').toLowerCase();
+    return haystack.includes(searchQuery.toLowerCase());
+  }).slice(0, 6);
+
+  const focusSearch = () => {
+    setSearchOpen(true);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  };
 
   return (
-    <header className="h-14 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between shrink-0 shadow-md">
-      {/* Brand & System Title */}
-      <div className="flex min-w-0 items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
-          <Flame className="w-5 h-5 text-slate-950 fill-slate-950" />
-        </div>
-        
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h1 className="max-w-[170px] truncate text-sm font-black tracking-wide text-slate-100 font-sans sm:max-w-none">
-              INDUSTRIAL THERMAL INTELLIGENCE SYSTEM
-            </h1>
-            <span className="text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded">
-              SIH PS 26162
-            </span>
+    <header className="stitch-header">
+      <div className="stitch-brand">
+        <div className="stitch-brand-mark"><Flame size={19} fill="currentColor" /></div>
+        <div>
+          <div className="stitch-brand-title">
+            <h1>THERMAL INTELLIGENCE</h1>
+            <span>LIVE FEED</span>
           </div>
-          <p className="hidden text-[11px] text-slate-400 font-mono sm:block">
-            NASA FIRMS Satellite Telemetry & OpenStreetMap Spatial Risk Engine
-          </p>
+          <p>Satellite-Based Industrial Fire &amp; Thermal Source Attribution</p>
         </div>
       </div>
-
-      {/* Quick Summary KPIs */}
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-2 bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800">
-          <ShieldAlert className="w-4 h-4 text-red-400" />
-          <div className="text-xs">
-            <span className="text-slate-400 block text-[10px]">High Priority Hotspots</span>
-            <span className="font-mono font-bold text-red-400">{highRiskCount} / {events.length}</span>
-          </div>
+      <div className="stitch-tagline">We don't just detect heat. <strong>We understand what it means.</strong></div>
+      <div className="stitch-header-actions">
+        <div className="stitch-location"><MapPin size={13} /><div><b>India</b><small>National Monitoring</small></div></div>
+        <div className="stitch-status"><span /> <div><b>{isLiveApiConnected ? 'SYSTEM ONLINE' : 'DEMO MODE'}</b><small>Last Updated: 03 Sep 2026, 14:32</small></div></div>
+        <div className={`stitch-search ${searchOpen ? 'is-open' : ''}`}>
+          {searchOpen && <input ref={inputRef} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} onKeyDown={(event) => event.key === 'Escape' && setSearchOpen(false)} placeholder="Search sites, regions, risk..." aria-label="Search thermal sites" />}
+          <button className="stitch-icon-button" title="Search" onClick={focusSearch}><Search size={15} /></button>
+          {searchOpen && matches.length > 0 && <div className="stitch-search-results">{matches.map((event) => <button key={event.id} onClick={() => { onSelectEvent(event); setSearchQuery(event.id); setSearchOpen(false); }}><b>{event.id}</b><span>{event.location}<small>{event.riskLevel} · {event.classification?.predicted_category}</small></span></button>)}</div>}
         </div>
-
-        <div className="flex items-center gap-2 bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800">
-          <Cpu className="w-4 h-4 text-sky-400" />
-          <div className="text-xs">
-            <span className="text-slate-400 block text-[10px]">Industrial Confirmed</span>
-            <span className="font-mono font-bold text-sky-400">{industrialCount} Events</span>
-          </div>
-        </div>
-
-        {/* Backend API Connection Status Pill */}
-        <div className="flex items-center gap-2">
-          {isLiveApiConnected ? (
-            <div className="flex items-center gap-1.5 text-xs font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 px-2.5 py-1 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              FastAPI Live
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 text-xs font-mono bg-amber-950/80 text-amber-400 border border-amber-800/80 px-2.5 py-1 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-              Demonstration Mode (Client Analytics)
-            </div>
-          )}
-        </div>
+        <button className="stitch-icon-button stitch-notifications" title="Notifications"><Bell size={15} /><i>3</i></button>
+        <div className="stitch-profile"><strong>AD</strong><div><b>Admin</b><small>Investigator</small></div></div>
+      </div>
+      <div className="stitch-mobile-status">
+        <span className="stitch-live-dot" /> {events.length} telemetry events
       </div>
     </header>
   );
